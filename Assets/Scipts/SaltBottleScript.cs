@@ -15,13 +15,13 @@ public class SaltBottleScript : MonoBehaviour
     private float currentTilt = 0.0f;
     private bool isStarted = false;
 
-    private Rigidbody rigidbody;
+    private Rigidbody rigid;
     
     public float rotationSpeed = 10.0f;
 
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        rigid = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -79,7 +79,7 @@ public class SaltBottleScript : MonoBehaviour
         {
             Vector3 offset = new Vector3(Random.Range(-particleVariance, particleVariance), Random.Range(-particleVariance, particleVariance), Random.Range(-particleVariance, particleVariance));
             GameObject salt = Instantiate(saltPrefab, socketObject.transform.position + offset, Quaternion.identity);
-
+            salt.transform.parent = GameObject.Find("SaltParent").transform;
             salt.GetComponent<Rigidbody>().velocity = v;
 
             yield return new WaitForSeconds(0.1f);

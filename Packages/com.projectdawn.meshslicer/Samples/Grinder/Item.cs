@@ -8,6 +8,11 @@ public class Item : MonoBehaviour
     public float3 Velocity;
     public float Drag;
 
+    [HideInInspector]
+    public bool isWashed = false;
+    [HideInInspector]
+    public bool isSuaced = false;
+    
     void Update()
     {
         float3 gravity = 10;

@@ -1,6 +1,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,9 +23,9 @@ public class Grab : MonoBehaviour
 
     public float turnSpeed;
 
-    bool isAdded = false;
+    bool isMatAdded = false;
 
-    bool isForced = false;
+    Dictionary<GameObject, List<Material>> objAndMats; 
 
     bool isRecovered = false;
 
@@ -33,11 +34,12 @@ public class Grab : MonoBehaviour
 
     float timer = 0;
     [HideInInspector]
+    public GameObject grabObject = null;
+
     Material mat;
 
     List<Material> Allmats;
 
-    public GameObject grabObject = null;
     public static Grab Instance
     {
         get
@@ -56,6 +58,8 @@ public class Grab : MonoBehaviour
         Allmats= new List<Material>();
    
         lastHandPos = hand.transform.position;
+
+        objAndMats = new Dictionary<GameObject, List<Material>>();
     }     
     private void Update()
     {
@@ -66,20 +70,17 @@ public class Grab : MonoBehaviour
   
 
         if (grabObject&& !GameObject.Find("WhiteHand").GetComponent<HandController>().isGrab) {
-            grabObject.GetComponent<Rigidbody>().AddForce(vloc, ForceMode.Impulse);
+          //  grabObject.GetComponent<Rigidbody>().AddForce(vloc, ForceMode.Impulse);
             grabObject.transform.parent = null;
             grabObject.gameObject.GetComponent<Rigidbody>().useGravity = true;
             grabObject.gameObject.GetComponent<Rigidbody>().freezeRotation = false;
-
-            timer = Time.time;
-            Debug.Log("TImer: "+timer);
+            grabObject = null;
+            touchedObj= null;
+        
+          //  Debug.Log("TImer: "+timer);
         }
        
-        if (Time.time - timer == 2f)
-        {
-            grabObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            Debug.Log("Cur: " + timer + " TIme: " + Time.time);
-        }
+    
         
     }
     // Update is called once per frame
@@ -87,44 +88,113 @@ public class Grab : MonoBehaviour
     {
     
         touchedObj = other.gameObject;
-        Material curMAt = null;
-        if (!isAdded&&!isRecovered) {
-            Allmats.Add(mat);
-            foreach (Material m in touchedObj.GetComponent<Renderer>().materials)
-            {
-                Allmats.Add(m);
-            }
+        Material curMAt =null;
+       
+        if (!isMatAdded&&!isRecovered) {
 
-            if (touchedObj.transform.childCount != 0)
+            if (touchedObj.transform.childCount == 0)
             {
-                touchedObj.transform.GetChild(0).GetComponent<Renderer>().materials = Allmats.ToArray();
-                 curMAt = touchedObj.transform.GetChild(0).GetComponent<Renderer>().material;
+
+                List<Material> list = new List<Material>();
+                list.Add(mat);
+                Material[] mats = touchedObj.GetComponent<Renderer>().materials;
+
+                foreach (Material m in mats)
+                {
+                    list.Add(m);
+                }
+                objAndMats.Add(touchedObj, list);
+
+                touchedObj.GetComponent<Renderer>().materials = objAndMats[touchedObj].ToArray();
             }
             else {
-                touchedObj.GetComponent<Renderer>().materials = Allmats.ToArray();
-                 curMAt = touchedObj.GetComponent<Renderer>().material;
+               
+                for (int i=0;i<touchedObj.transform.childCount;i++) {
+                    if (!touchedObj.transform.GetComponent<Renderer>()) {
+                        
+                        GameObject t = touchedObj.transform.GetChild(i).gameObject;
+                        if (t.tag=="childPart") {
+                            List<Material> list = new List<Material>();
+                            list.Add(mat);
+                            foreach (Material m in t.GetComponent<Renderer>().materials) {
+                            list.Add(m);
+                            }
+
+                            objAndMats.Add(t, list);
+                            t.GetComponent<Renderer>().materials = list.ToArray();
+                        }
+                   
+                    }
+                
+                }
+            
             }
-           
-            isAdded= true;
-        }
-        if (curMAt!=null) {
-            float indes = Mathf.Lerp(curMAt.GetFloat("_Emiss"), target, Time.deltaTime * turnSpeed);
-            if (Mathf.Abs(target - curMAt.GetFloat("_Emiss")) < 0.02f)
-            {
-                target = target == max ? min : max;
-            }
-            curMAt.SetFloat("_Emiss", indes);
+
+            isMatAdded = true;
+        
         }
 
+        if (isMatAdded) {
+            
+            if (objAndMats.Count == 1)
+            {
+                if (touchedObj.GetComponent<Renderer>()) {
+                curMAt = touchedObj.GetComponent<Renderer>().material;
+                }
+                else
+                {
+                    curMAt = touchedObj.transform.GetChild(0).GetComponent<Renderer>().material;
+                }
+                string s = curMAt.name.Substring(0,4);
+                
+                if (s=="glow")
+                {
+                    float indes = Mathf.Lerp(curMAt.GetFloat("_Emiss"), target, Time.deltaTime * turnSpeed);
+                    if (Mathf.Abs(target - curMAt.GetFloat("_Emiss")) < 0.02f)
+                    {
+                        target = target == max ? min : max;
+                    }
+                    curMAt.SetFloat("_Emiss", indes);
+                    Debug.Log("GLow: " + indes);
+                }
+
+
+
+            }
+            else
+            {
+                foreach (GameObject b in objAndMats.Keys)
+                {
+                    Material curM = b.GetComponent<Renderer>().material;
+                    string s = curM.name.Substring(0, 4);
+                    if (s=="glow")
+                    {
+                        float indes = Mathf.Lerp(curM.GetFloat("_Emiss"), target, Time.deltaTime * turnSpeed);
+                        if (Mathf.Abs(target - curM.GetFloat("_Emiss")) < 0.02f)
+                        {
+                            target = target == max ? min : max;
+                        }
+                        curM.SetFloat("_Emiss", indes);
+
+                    }
+                }
+
+              //    Debug.Log("GLow: " );
+            }
+
+        }
        
+    
 
 
         if (other.gameObject.tag == "Grable" && grabObject == null && GameObject.Find("WhiteHand").GetComponent<HandController>().isGrab)
         {
             grabObject = other.gameObject;
-
-            resetMat(grabObject);
-            isRecovered= true;
+             grabObject.gameObject.GetComponent<Rigidbody>().velocity= Vector3.zero;
+            if (!isRecovered) {
+                resetMat(grabObject, grabObject.transform.childCount);
+                isRecovered = true;
+            }         
             grabObject.transform.parent = transform;
             grabObject.gameObject.GetComponent<Rigidbody>().useGravity = false;
             grabObject.gameObject.GetComponent<Rigidbody>().freezeRotation = true;
@@ -135,47 +205,45 @@ public class Grab : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (touchedObj) {
-            resetMat(touchedObj);
+        if (touchedObj&&!isRecovered) {
+            resetMat(touchedObj,touchedObj.transform.childCount);
         }
         other.transform.parent = null;
         other.gameObject.GetComponent<Rigidbody>().useGravity = true;
         other.gameObject.GetComponent<Rigidbody>().freezeRotation = false;
 
-        if (grabObject) {
-        
-        //  grabObject.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-         
-           grabObject = null;
-           isForced= false;
-        }
+
+        grabObject = null;
+        touchedObj = null;
         isRecovered = false;
+        isMatAdded= false;
      //   timer = Time.time;
       //  Debug.Log(other.name+" exit");
     }
 
 
-    void resetMat(GameObject obj) {
-        if (Allmats.Count>1) {
-            Allmats.RemoveAt(0);
-        }
-        
-        if (obj.transform.childCount != 0)
+    void resetMat(GameObject obj, int childCount)
+    {
+
+        if (childCount == 0)
         {
-            
-            if (Allmats.Count != 0) {
-                obj.transform.GetChild(0).GetComponent<Renderer>().materials = Allmats.ToArray();
-
+            foreach (GameObject b in objAndMats.Keys) {
+                objAndMats[b].RemoveAt(0);
             }
+
+            obj.GetComponent<Renderer>().materials = objAndMats[obj].ToArray();
         }
+
         else {
-            if (Allmats.Count!=0) {
-                obj.GetComponent<Renderer>().materials = Allmats.ToArray();
-            }
+            foreach (GameObject b in objAndMats.Keys ) {
+                objAndMats[b].RemoveAt(0);
+                b.GetComponent<Renderer>().materials = objAndMats[b].ToArray();
+            }    
         }
-        Debug.Log("Mats Clear");
-        Allmats.Clear();
-        isAdded = false;
-    }
 
+        objAndMats.Clear();
+       isRecovered= true;
+        isMatAdded = false;
+  
+    }
 }

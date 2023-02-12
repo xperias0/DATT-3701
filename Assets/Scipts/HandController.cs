@@ -106,9 +106,9 @@ public class HandController : MonoBehaviour
             isGrab= false;
         }
 
-        if (Input.GetButton("Jump")) {
-            actOne();
-        }
+        //if (Input.GetButton("Jump")) {
+        //    actOne();
+        //}
 
         if (Input.GetButton("LeftBumper")) {
             transform.Rotate(Vector3.forward, -handspeed * Time.deltaTime);

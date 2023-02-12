@@ -7,6 +7,9 @@ public class Salt : MonoBehaviour
     public float timer = 10.0f;
 
     private float currentTimer = 1.0f;
+
+    [HideInInspector]
+    public bool isAdded = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,5 +25,15 @@ public class Salt : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isAdded&&other.gameObject.layer==7) {
+            GameObject.Find("Canvas").GetComponent<ScoreManager>().addSalt();
+            isAdded = true;
+        }      
+      
     }
 }
