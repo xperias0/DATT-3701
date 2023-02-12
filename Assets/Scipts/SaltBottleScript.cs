@@ -27,8 +27,8 @@ public class SaltBottleScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        rigidbody.AddTorque(transform.forward * horizontalInput * rotationSpeed);
+        // float horizontalInput = Input.GetAxis("Horizontal");
+        // rigidbody.AddTorque(transform.forward * horizontalInput * rotationSpeed);
         
         currentTilt = Mathf.Abs(transform.rotation.eulerAngles.z);
 
