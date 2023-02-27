@@ -25,7 +25,7 @@ public class Blade : MonoBehaviour
 
             m_Manager.Slice(slicer, plane, (result) =>
             {
-                m_Sliced.Add(result.Slicer); 
+                m_Sliced.Add(result.Slicer);
             });
         }
     }

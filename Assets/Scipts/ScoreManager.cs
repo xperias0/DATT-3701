@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEditor.SceneManagement;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -15,6 +18,8 @@ public class ScoreManager : MonoBehaviour
     public int saltScore = 0;
 
     int maxFinalScore = 100;
+
+    float finishedTime;
     // Update is called once per frame
 
     private void Update()
@@ -22,6 +27,10 @@ public class ScoreManager : MonoBehaviour
         if (Input.GetButtonDown("Finish")) {
             Debug.Log("Done! ");
             FInalCodition();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R)) {
+            SceneManager.LoadScene(1);
         }
     }
     public void addScore(int addNum ) {
@@ -44,7 +53,8 @@ public class ScoreManager : MonoBehaviour
     }
 
     public void FInalCodition() {
-        if (FinalScore > 50)
+        finalTime();
+        if (FinalScore >= 50)
         {
             GameObject.Find("Condition").GetComponent<TextMeshProUGUI>().text = "Nice Job!";
         }
@@ -55,4 +65,11 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
+
+
+    public void finalTime() {
+        finishedTime= Time.time;
+        GameObject.Find("FinishedTime").GetComponent<TextMeshProUGUI>().text ="Finished time: "+ finishedTime.ToString("f2")+" s";
+    
+    }
 }
