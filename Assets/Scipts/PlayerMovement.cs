@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public CharacterController controller;
 
-    public float speed = 12f;
+    public float speed = 18f;
     public float gravity = -10f;
     public float jumpHeight = 2f;
 
@@ -21,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 velocity;
     bool isGrounded;
-
+    GameSpeedSystem gs;
 #if ENABLE_INPUT_SYSTEM
     InputAction movement;
     InputAction jump;
@@ -47,6 +47,12 @@ public class PlayerMovement : MonoBehaviour
     }
 
 #endif
+
+    private void Start()
+    {
+        gs = GameObject.Find("Canvas").GetComponent<GameSpeedSystem>();
+        speed = gs.maxCharcterSpeed;
+    }
 
     // Update is called once per frame
     void Update()

@@ -12,7 +12,9 @@ public class Item : MonoBehaviour
     public bool isWashed = false;
     [HideInInspector]
     public bool isSuaced = false;
-    
+
+    [HideInInspector]
+    public bool isSliced = false;
     void Update()
     {
         float3 gravity = 10;

@@ -36,6 +36,8 @@ public class FruitSpawner : MonoBehaviour
         var rigidBody = fruit.Rigidbody;
         rigidBody.velocity = normalize(new float3(direction.x, direction.y, 0)) * force;
         rigidBody.angularVelocity = new Vector3(0, 0, angularForce);
+
+       // GetComponent<AudioSource>().Play();
     }
 
     private void Start()
@@ -53,7 +55,8 @@ public class FruitSpawner : MonoBehaviour
             Elapsed -= Interval;
         }
 
-        if (GameObject.Find("Objs").transform.childCount>15) {
+        if (GameObject.Find("Objs").transform.childCount > 15)
+        {
             Destroy(GameObject.Find("Objs").transform.GetChild(0).gameObject);
         }
 
