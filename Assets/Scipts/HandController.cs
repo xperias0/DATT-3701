@@ -20,7 +20,9 @@ public class HandController : MonoBehaviour
 
     public float speed = 2f;
 
-    public float handRotSpeed = 20f;
+
+    [HideInInspector]
+    public float handRotSpeed = 600f;
 
 
    // public float handspeed;
@@ -40,7 +42,7 @@ public class HandController : MonoBehaviour
 
     Vector3 handDefaultPos;
 
-    public float handMovespeed;
+     float handMovespeed = 1.5f;
 
     Vector3 handMoveTargetPos;
 
@@ -55,15 +57,33 @@ public class HandController : MonoBehaviour
 
     float rotTimer = 0;
 
-    void Update()
+    [HideInInspector]
+
+    private void Start()
+    {
+        handRotSpeed = GameObject.Find("Canvas").GetComponent<GameSpeedSystem>().maxHandRotSpeed;
+    }
+
+    //void FixedUpdate()
+    //{
+    //    handController();
+
+    //    handRot();
+
+    //    handMove();
+
+    //}
+
+    private void Update()
     {
         handController();
 
         handRot();
 
         handMove();
-
     }
+
+
 
     void handMove() {
         float UpandDownAxis = Input.GetAxis("UpDownAxis");
@@ -186,29 +206,29 @@ public class HandController : MonoBehaviour
         curRotSpeed = Mathf.Clamp(curRotSpeed,minRotSpeed,maxRotSpeed);
       //  Debug.Log("Timer : " + rotTimer + " Speed: " + curRotSpeed);
 
-        if (Input.GetButton("LeftBumper") || Input.GetButton("RightBumper"))
-        {
+        //if (Input.GetButton("LeftBumper") || Input.GetButton("RightBumper"))
+        //{
 
-            rotTimer += Time.deltaTime * 2;
-            if (rotTimer>4f) {
-                curRotSpeed += rotTimer;
+        //    rotTimer += Time.deltaTime * 2;
+        //    if (rotTimer>4f) {
+        //        curRotSpeed += rotTimer;
 
-            }
-        }
-        else { 
-            rotTimer= 0;
-            curRotSpeed = minRotSpeed;
-        }
+        //    }
+        //}
+        //else { 
+        //    rotTimer= 0;
+        //    curRotSpeed = minRotSpeed;
+        //}
         if (Input.GetButton("LeftBumper"))
         {                   
-            transform.Rotate(Vector3.forward, -curRotSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.forward, -handRotSpeed * Time.deltaTime);
         }
        
 
         if (Input.GetButton("RightBumper"))
         {
      
-            transform.Rotate(Vector3.forward, curRotSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.forward, handRotSpeed * Time.deltaTime);
 
         } 
 

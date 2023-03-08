@@ -18,7 +18,7 @@ public class LookWithMouse : MonoBehaviour
 
     float Timer = 0;
  
-     float ControllerSensitivity;
+    public float ControllerSensitivity;
 
     float addSpeed = 20f;
     // Start is called before the first frame update
@@ -27,6 +27,7 @@ public class LookWithMouse : MonoBehaviour
      
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        ControllerSensitivity = GameObject.Find("Canvas").GetComponent<GameSpeedSystem>().maxCameraSpeed;
     }
     
     
@@ -60,27 +61,27 @@ public class LookWithMouse : MonoBehaviour
             Cursor.visible = false;
         }
 
-        ControllerSensitivity = Mathf.Clamp(ControllerSensitivity,minSpeed, maxSpeed);
+        //  ControllerSensitivity = Mathf.Clamp(ControllerSensitivity,minSpeed, maxSpeed);
 
-        if (controllerX != 0 || controllerY != 0)
-        {
-            xRotation -= controllerY;
-            Timer += Time.deltaTime;
+        //if (controllerX != 0 || controllerY != 0)
+        //{
+        //    xRotation -= controllerY;
+        //    Timer += Time.deltaTime;
 
-            if (Timer>1f) {
-                ControllerSensitivity += addSpeed*Time.deltaTime;
-            }
+        //    if (Timer>1f) {
+        //        ControllerSensitivity += addSpeed*Time.deltaTime;
+        //    }
 
-        }
-        else {
+        //}
+        //else {
 
-            Timer = 0;
-            ControllerSensitivity = minSpeed;
-        }
+        //    Timer = 0;
+        //    ControllerSensitivity = minSpeed;
+        //}
         //Debug.Log("Sensitivity: "+ ControllerSensitivity);
-      //  Debug.Log("Controller: "+ Input.GetAxis("ControllerX")+"   "+ Input.GetAxis("ControllerY"));
-           
-            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        //  Debug.Log("Controller: "+ Input.GetAxis("ControllerX")+"   "+ Input.GetAxis("ControllerY"));
+        xRotation -= controllerY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
          
 
             transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
