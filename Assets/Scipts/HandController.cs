@@ -27,10 +27,12 @@ public class HandController : MonoBehaviour
 
    // public float handspeed;
 
-    public float angle = 280f;  
+    public float angle = 280f;
 
+    [HideInInspector]
     public bool isLeftGrab = false;
-    
+
+    [HideInInspector]
     public bool isGrab = false;
 
     float totalLeftAngle = 0;
@@ -39,6 +41,7 @@ public class HandController : MonoBehaviour
 
     bool actOne = false;
 
+    public float handGrabSpeed;
 
     Vector3 handDefaultPos;
 
@@ -50,18 +53,20 @@ public class HandController : MonoBehaviour
 
 
     float minRotSpeed =80f;
-    
+
+    [HideInInspector]
     public float maxRotSpeed = 550f;
 
     float curRotSpeed = 80f;
 
-    float rotTimer = 0;
+  
 
     [HideInInspector]
 
     private void Start()
     {
         handRotSpeed = GameObject.Find("Canvas").GetComponent<GameSpeedSystem>().maxHandRotSpeed;
+       
     }
 
     //void FixedUpdate()
@@ -124,7 +129,7 @@ public class HandController : MonoBehaviour
                 rotOne(one);
                 rot(two,1f);
 
-                totalLeftAngle += handRotSpeed * Time.deltaTime;
+                totalLeftAngle += handGrabSpeed * Time.deltaTime;
                 // Debug.Log("Angle: " + totalLeftAngle);
             }
             else
@@ -141,7 +146,7 @@ public class HandController : MonoBehaviour
                 InverseRotOne(one);
                 InverseRot(two,1f);
 
-                totalLeftAngle -= handRotSpeed * Time.deltaTime;
+                totalLeftAngle -= handGrabSpeed * Time.deltaTime;
             }
             else
             {
@@ -160,7 +165,7 @@ public class HandController : MonoBehaviour
                 rot(three,1f);
                 rot(four,1f);
                 rot(five, 1f);
-                totalRightAngle += handRotSpeed * Time.deltaTime;
+                totalRightAngle += handGrabSpeed * Time.deltaTime;
             }
             else
             {
@@ -175,7 +180,7 @@ public class HandController : MonoBehaviour
                 InverseRot(three,1f);
                 InverseRot(four,1f);
                 InverseRot(five,1f);
-                totalRightAngle -= handRotSpeed * Time.deltaTime;
+                totalRightAngle -= handGrabSpeed * Time.deltaTime;
 
             }
             else
@@ -204,21 +209,7 @@ public class HandController : MonoBehaviour
     }
     void handRot() {
         curRotSpeed = Mathf.Clamp(curRotSpeed,minRotSpeed,maxRotSpeed);
-      //  Debug.Log("Timer : " + rotTimer + " Speed: " + curRotSpeed);
-
-        //if (Input.GetButton("LeftBumper") || Input.GetButton("RightBumper"))
-        //{
-
-        //    rotTimer += Time.deltaTime * 2;
-        //    if (rotTimer>4f) {
-        //        curRotSpeed += rotTimer;
-
-        //    }
-        //}
-        //else { 
-        //    rotTimer= 0;
-        //    curRotSpeed = minRotSpeed;
-        //}
+     
         if (Input.GetButton("LeftBumper"))
         {                   
             transform.Rotate(Vector3.forward, -handRotSpeed * Time.deltaTime);

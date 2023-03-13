@@ -9,6 +9,7 @@ TagManager:
   - obj
   - RotObj
   - kinematic
+  - cookable
   layers:
   - Default
   - TransparentFX

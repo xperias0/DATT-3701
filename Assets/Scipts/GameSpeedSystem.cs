@@ -17,9 +17,9 @@ public class GameSpeedSystem : MonoBehaviour
     float colorAlpha = 255f;
 
 
-    public float maxCameraSpeed = 40f;
+    public float maxCameraSpeed = 50f;
     public float maxCharcterSpeed = 15f;
-    public float maxHandRotSpeed = 600f;
+    public float maxHandRotSpeed = 500f;
 
     private void Start()
     {
@@ -84,4 +84,7 @@ public class GameSpeedSystem : MonoBehaviour
        
     
     }
+
+
+   
 }
